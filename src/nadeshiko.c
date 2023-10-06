@@ -38,7 +38,7 @@ answer_to_connection (void *cls, struct MHD_Connection *connection,
     (void) upload_data_size;  /* Unused. Silent compiler warning. */
     (void) con_cls;           /* Unused. Silent compiler warning. */
 
-    char* filename = strdup(ROOT_PATH);
+    char* filename = strdup(root_path);
     strcat(filename, url);
 
     if (0 != strcmp (method, "GET"))
@@ -80,7 +80,8 @@ answer_to_connection (void *cls, struct MHD_Connection *connection,
 }
 
 
-void nadeshiko_init() {
+void nadeshiko_init(const char *p_root_path) {
+    root_path = strdup(p_root_path);
     server_data.daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD, PORT, NULL, NULL,
                                 &answer_to_connection, NULL, MHD_OPTION_END);
 }
@@ -128,48 +129,4 @@ void nadeshiko_destroy(Nadeshiko* nadeshiko) {
     free(nadeshiko->entry_point);
     webview_destroy(nadeshiko->w); // should i also free w?
     free(nadeshiko);
-}
-
-
-
-
-
-
-typedef struct {
-  Nadeshiko* instance;
-  unsigned int count;
-} context_t;
-
-void increment(const char *seq, const char *req, void *arg) {
-  (void)req;
-  context_t *context = (context_t *)arg;
-  char count_string[10] = {0};
-  sprintf(count_string, "%u", ++context->count);
-  char result[21] = {0};
-  strcat(result, "{\"count\": ");
-  strcat(result, count_string);
-  strcat(result, "}");
-  nadeshiko_return(context->instance, seq, 0, result);
-}
-
-int main() {
-    nadeshiko_init();
-
-    Nadeshiko* instance = (Nadeshiko *)malloc(sizeof(Nadeshiko));
-    instance = nadeshiko_create_window(
-        "Test",
-        "index.html",
-        500,
-        500
-    );
-
-    context_t context = {.instance = instance, .count = 0};
-    nadeshiko_bind(instance, "increment", increment, &context);
-
-    nadeshiko_run(instance);
-    nadeshiko_destroy(instance);
-
-    nadeshiko_stop();
-
-    return 0;
 }

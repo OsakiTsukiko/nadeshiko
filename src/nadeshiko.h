@@ -23,13 +23,14 @@
 
 #include <webview.h>
 #include <microhttpd.h>
+#include <stdlib.h>
 
 #define STR(VAR) #VAR
 #define VAR_TO_STRING(VAR) STR(VAR)
 // macro witchcraft
 
 #define PORT 25160
-#define ROOT_PATH "./web"
+// #define ROOT_PATH "./web"
 #define ROOT_URL "http://127.0.0.1:" VAR_TO_STRING(PORT) "/"
 #define MIMETYPE "none" // let the browser figure it out cuz im lazy
 
@@ -47,13 +48,14 @@ typedef struct {
 } WebServerData;
 
 WebServerData server_data; // variable definition in headers :skull:
+char *root_path = NULL;
 
 /**
  * Server Stuff
 **/
 
-void nadeshiko_init();
-void nadeshiko_stop() {MHD_stop_daemon(server_data.daemon);}
+void nadeshiko_init(const char *p_root_path);
+void nadeshiko_stop() {MHD_stop_daemon(server_data.daemon); free(root_path);}
 
 /**
  * Nadeshiko Stuff

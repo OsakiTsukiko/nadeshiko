@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="main">
+        <button id="btn">Increment</button>
+        <input type="text" id="output" readonly value="0">
+    </div>
+
+    <script>
+    var countElement = document.getElementById("output");
+    document.getElementById("btn").addEventListener("click", () => {
+        window.increment().then(result => { countElement.value = result.count; })
+    })
+    </script>
+</body>
+</html>

@@ -1,1 +1,2 @@
-gcc -o build/test src/nadeshiko.c -Wl,-rpath,./ -fPIC $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0) -L./src/thirdparty/lib -I./src/thirdparty/include -lmicrohttpd -lwebview
+#!/bin/sh
+LD_RUN_PATH='$ORIGIN/lib' gcc -o build/test src/nadeshiko.c -fPIC $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0) -L./src/thirdparty/lib -I./src/thirdparty/include -lmicrohttpd -lwebview
