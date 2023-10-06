@@ -8,7 +8,15 @@
  * to make the design so that they could be implemented in the future witout much hussle
  * 
  * - Osaki
-*/
+**/
+
+/**
+ * TODO: 
+ * - ADD COMMENTS 
+ * - make docs
+ * - build system (prob cmake)
+ * - multiple windows? (look into window return)
+**/
 
 #ifndef NADESHIKO_H
 #define NADESHIKO_H
@@ -51,10 +59,31 @@ void nadeshiko_stop() {MHD_stop_daemon(server_data.daemon);}
  * Nadeshiko Stuff
 **/
 
-Nadeshiko* nadeshiko_create_window(char* p_title, char* p_entry_point, int p_width, int p_height);
+Nadeshiko* nadeshiko_create_window(const char* p_title, const char* p_entry_point, int p_width, int p_height);
 
 void nadeshiko_set_min_window_size(Nadeshiko* nadeshiko, int p_width, int p_height);
 void nadeshiko_set_max_window_size(Nadeshiko* nadeshiko, int p_width, int p_height);
+
+// just wrappers for convenience
+void nadeshiko_bind(
+    Nadeshiko* nadeshiko, 
+    const char* p_name,
+    void (*fn)(const char *seq, const char *req, void *arg),
+    void *arg
+) { webview_bind(nadeshiko->w, p_name, fn, arg); }
+
+void nadeshiko_unbind(Nadeshiko* nadeshiko, const char *name) {
+    webview_unbind(nadeshiko->w, name);
+};
+
+void nadeshiko_return(
+    Nadeshiko* nadeshiko, 
+    const char *seq, 
+    int status,
+    const char *result
+) {
+    webview_return(nadeshiko->w, seq, status, result);
+}
 
 void nadeshiko_run(Nadeshiko* nadeshiko);
 void nadeshiko_destroy(Nadeshiko* nadeshiko);

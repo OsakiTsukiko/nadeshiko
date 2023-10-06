@@ -89,7 +89,7 @@ void nadeshiko_init() {
  * Nadeshiko Stuff
 **/
 
-Nadeshiko* nadeshiko_create_window(char* p_title, char* p_entry_point, int p_width, int p_height) {
+Nadeshiko* nadeshiko_create_window(const char* p_title, const char* p_entry_point, int p_width, int p_height) {
     Nadeshiko* window = (Nadeshiko *)malloc(sizeof(Nadeshiko));
     
     window->url = (char *)malloc(sizeof(char) * (strlen(ROOT_URL) + strlen(p_entry_point) + 1));
@@ -130,6 +130,28 @@ void nadeshiko_destroy(Nadeshiko* nadeshiko) {
     free(nadeshiko);
 }
 
+
+
+
+
+
+typedef struct {
+  Nadeshiko* instance;
+  unsigned int count;
+} context_t;
+
+void increment(const char *seq, const char *req, void *arg) {
+  (void)req;
+  context_t *context = (context_t *)arg;
+  char count_string[10] = {0};
+  sprintf(count_string, "%u", ++context->count);
+  char result[21] = {0};
+  strcat(result, "{\"count\": ");
+  strcat(result, count_string);
+  strcat(result, "}");
+  nadeshiko_return(context->instance, seq, 0, result);
+}
+
 int main() {
     nadeshiko_init();
 
@@ -140,6 +162,9 @@ int main() {
         500,
         500
     );
+
+    context_t context = {.instance = instance, .count = 0};
+    nadeshiko_bind(instance, "increment", increment, &context);
 
     nadeshiko_run(instance);
     nadeshiko_destroy(instance);
